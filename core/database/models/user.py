@@ -2,9 +2,10 @@ from datetime import datetime, timezone
 
 from sqlalchemy import BigInteger
 from sqlalchemy import DateTime
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from database.models.base import Base
+from core.database.models.api_key import ApiKey
+from core.database.models.base import Base
 
 
 class User(Base):
@@ -16,3 +17,4 @@ class User(Base):
     created_at: Mapped[DateTime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=datetime.now(tz=timezone.utc), index=True
     )
+    api_keys: Mapped[list["ApiKey"]] = relationship(back_populates="user")
