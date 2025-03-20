@@ -20,17 +20,26 @@ connect_args = {
     }
 }
 
-engine: AsyncEngine = create_async_engine(
-    app_config.uri,
-    echo=False,
-    echo_pool=False,
-    connect_args=connect_args,
-    poolclass=AsyncAdaptedQueuePool,
-    pool_size=5,
-    max_overflow=10,
-    pool_timeout=30,
-    pool_recycle=3600,
-)
+if "sqlite" in app_config.database_uri:
+    engine: AsyncEngine = create_async_engine(
+        app_config.database_uri,
+        echo=False,
+        echo_pool=False,
+        connect_args={"check_same_thread": False},
+        poolclass=AsyncAdaptedQueuePool,
+    )
+else:
+    engine: AsyncEngine = create_async_engine(
+        app_config.database_uri,
+        echo=False,
+        echo_pool=False,
+        connect_args=connect_args,
+        poolclass=AsyncAdaptedQueuePool,
+        pool_size=5,
+        max_overflow=10,
+        pool_timeout=30,
+        pool_recycle=3600,
+    )
 
 async_session_factory = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 session: async_scoped_session[AsyncSession] = async_scoped_session(

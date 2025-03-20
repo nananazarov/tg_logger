@@ -15,7 +15,7 @@ class Config(BaseSettings):
     db_name: str = Field(..., alias="POSTGRES_DB")
 
     @property
-    def uri(self) -> str:
+    def database_uri(self) -> str:
         return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.db_name}"
 
     model_config = SettingsConfigDict(env_file=(env_path / ".env", env_path / ".env.local"))
